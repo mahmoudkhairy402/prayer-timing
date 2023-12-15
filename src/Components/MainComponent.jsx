@@ -214,27 +214,27 @@ function MainComponent() {
           <PrayerCard
             name="الفجر"
             time={timing.Fajr}
-            image="src\images\fajr-prayer.png"
+            image="src\assets\fajr-prayer.png"
           />
           <PrayerCard
             name="الظهر"
             time={timing.Dhuhr}
-            image="src\images\dhhr-prayer-mosque.png"
+            image="src\assets\dhhr-prayer-mosque.png"
           />
           <PrayerCard
             name="العصر"
             time={timing.Asr}
-            image="src\images\asr-prayer-mosque.png"
+            image="src\assets\asr-prayer-mosque.png"
           />
           <PrayerCard
             name="المغرب"
             time={timing.Maghrib}
-            image="src\images\sunset-prayer-mosque.png"
+            image="src\assets\sunset-prayer-mosque.png"
           />
           <PrayerCard
-            name="العشاء"
+            name="eshaa"
             time={timing.Isha}
-            image="src\images\night-prayer-mosque.png"
+            image="src\assets\night-prayer-mosque.png"
           />
         </Stack>
       </div>
