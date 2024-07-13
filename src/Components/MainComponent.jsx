@@ -9,7 +9,11 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import PrayerCard from "./Card";
 import moment from "moment";
-
+import fajr from "../assets/fajr-prayer.png";
+import duhr from "../assets/dhhr-prayer-mosque.png";
+import asr from "../assets/asr-prayer-mosque.png";
+import magrip from "../assets/sunset-prayer-mosque.png";
+import ishaa from "../assets/night-prayer-mosque.png";
 function MainComponent() {
   const [timing, setTiming] = useState({
     Fajr: "",
@@ -124,8 +128,9 @@ function MainComponent() {
   };
 
   const handleChange = (event) => {
-    console.log(event.target.value);
-    setLocation(event.target.value);
+    const city = event.target.value;
+    const country = city === "Cairo" ? "Egypt" : "Saudi Arabia";
+    setLocation({ city, country });
   };
   return (
     <>
@@ -177,19 +182,16 @@ function MainComponent() {
                   style={{ borderColor: "#fff" }}
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
-                  value={location.city}
+                  value={location?.city}
                   onChange={handleChange}
                 >
-                  <MenuItem
-                    value={{ city: "Cairo", country: "Egypt" }}
-                    selected
-                  >
+                  <MenuItem value="Cairo" selected>
                     القاهرة, مصر
                   </MenuItem>
-                  <MenuItem value={{ city: "Mecca", country: "Saudi Arabia" }}>
+                  <MenuItem value="Mecca">
                     مكة المكرمة, المملكة العربية السعودية
                   </MenuItem>
-                  <MenuItem value={{ city: "Madina", country: "Saudi Arabia" }}>
+                  <MenuItem value="Madina">
                     المدينة, المملكة العربية السعودية
                   </MenuItem>
                 </Select>
@@ -211,31 +213,11 @@ function MainComponent() {
           }}
           direction={{ xs: "column", sm: "row" }}
         >
-          <PrayerCard
-            name="الفجر"
-            time={timing.Fajr}
-            image="src\assets\fajr-prayer.png"
-          />
-          <PrayerCard
-            name="الظهر"
-            time={timing.Dhuhr}
-            image="src\assets\dhhr-prayer-mosque.png"
-          />
-          <PrayerCard
-            name="العصر"
-            time={timing.Asr}
-            image="src\assets\asr-prayer-mosque.png"
-          />
-          <PrayerCard
-            name="المغرب"
-            time={timing.Maghrib}
-            image="src\assets\sunset-prayer-mosque.png"
-          />
-          <PrayerCard
-            name="eshaa"
-            time={timing.Isha}
-            image="src\assets\night-prayer-mosque.png"
-          />
+          <PrayerCard name="الفجر" time={timing.Fajr} image={fajr} />
+          <PrayerCard name="الظهر" time={timing.Dhuhr} image={duhr} />
+          <PrayerCard name="العصر" time={timing.Asr} image={asr} />
+          <PrayerCard name="المغرب" time={timing.Maghrib} image={magrip} />
+          <PrayerCard name="العشاء" time={timing.Isha} image={ishaa} />
         </Stack>
       </div>
     </>
