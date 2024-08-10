@@ -1,15 +1,16 @@
-import { useState } from "react";
 import "./App.css";
-import MainComponent from "./Components/MainComponent";
-import { Container } from "@mui/material";
-
+import Iqraa from "./Components/Iqraa/iqraa";
+import MainComponent from "./Components/mainContent/MainComponent";
+import Navbar from "./Components/navbar/navbar";
 function App() {
   return (
     <>
-      <div style={{ width: "100vw", direction: "rtl" }}>
-        <Container maxWidth="lg" style={{ backgroundColor: "#222" }}>
+      <Navbar />
+      <div style={{ direction: "rtl" }}>
+        <div className="">
           <MainComponent />
-        </Container>
+          <Iqraa />
+        </div>
       </div>
     </>
   );

@@ -1,0 +1,13 @@
+.landing {
+  padding-top: 20px;
+}
+
+@media (min-width: 667px) {
+  .landing {
+    height: calc(100vh - 80px);
+  }
+}
+
+.cityNdynamicFontame {
+  font-size: clamp(1rem, 2vw + 0.5rem, 2.5rem);
+}
