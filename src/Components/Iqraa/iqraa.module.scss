@@ -6,7 +6,7 @@
   height: 100vh;
 
   .canvas {
-    width: 310px !important;
+    width: 320px !important;
     background-color: var(--biegColor);
     backdrop-filter: blur(5px) brightness(0.8) !important;
     height: 100vh;
@@ -38,7 +38,7 @@
         }
       }
     }
-    ul {
+    .searchResult {
       width: 100%;
       list-style-type: none;
       display: flex;
@@ -46,7 +46,7 @@
       flex-direction: column;
       background-color: var(--mainColor);
       color: var(--biegColor);
-      height: 60%;
+      height: 100vh;
       overflow: scroll;
       padding: 0;
       li {
@@ -78,7 +78,7 @@
     }
   }
   .togglers {
-    width: 100%;
+    max-width: 100%;
     position: absolute;
     top: 0;
     right: 0px;
@@ -91,163 +91,156 @@
     z-index: 100;
     display: flex;
     flex-wrap: nowrap;
-
-    .togleCanvas {
-      background-color: var(--biegColor) !important;
-      box-shadow: none;
-      border: none;
-      border-radius: 0 0 0 10px;
-      padding: 10px 20px;
-      border-right: 1px solid var(--secondaryColor);
-      font-weight: 500;
-
-      @media (max-width: 767px) {
-        font-size: 12px;
-        font-weight: 400;
+    padding: 0;
+  }
+  .togleCanvas {
+    background-color: var(--biegColor) !important;
+    box-shadow: none;
+    border: none;
+    border-radius: 0 0 0 10px;
+    padding: 5px;
+    border-right: 1px solid var(--secondaryColor);
+    font-weight: 500;
+  }
+  .redersUl {
+    background-color: var(--mainColor) !important;
+    max-height: 300px;
+    overflow: scroll;
+    direction: rtl !important;
+    li {
+      color: var(--biegColor) !important;
+      position: relative !important;
+      overflow: hidden;
+      width: 100%;
+      z-index: 10;
+      cursor: pointer;
+      &::after {
+        position: absolute;
+        content: "";
+        width: 90%;
+        height: 100%;
+        right: -100%;
+        top: 0;
+        opacity: 0.1s;
+        transition: 0.3s;
+        background-color: var(--cyanColor);
+        z-index: -1;
+        border-radius: 20px 0 0 20px;
+      }
+      &:hover {
+        background-color: var(--mainColor) !important;
+      }
+      &:hover::after {
+        right: 0;
+        opacity: 0.5;
+        background-color: var(--cyanColor);
+        // background-color: var(--mainColor);
       }
     }
-    .redersUl {
-      background-color: var(--mainColor) !important;
-      max-height: 300px;
-      overflow: scroll;
-      direction: rtl !important;
-      li {
-        color: var(--biegColor) !important;
-        position: relative !important;
-        overflow: hidden;
-        width: 100%;
-        z-index: 10;
-        cursor: pointer;
-        &::after {
-          position: absolute;
-          content: "";
-          width: 90%;
-          height: 100%;
-          right: -100%;
-          top: 0;
-          opacity: 0.1s;
-          transition: 0.3s;
-          background-color: var(--cyanColor);
-          z-index: -1;
-          border-radius: 20px 0 0 20px;
+  }
+}
+
+.ayasContainer {
+  height: 100vh;
+  max-width: 800px;
+  overflow-y: scroll;
+  padding: 15px;
+  padding-top: 60px;
+  margin: 0px auto;
+  margin-top: 20px;
+  scroll-behavior: smooth;
+  position: relative;
+  // display: flex;
+  // flex-direction: column;
+  // gap: 20px;
+
+  .page {
+    max-width: 100%;
+    min-height: calc(100% - 40px);
+    // aspect-ratio: 3/2;
+    padding: auto;
+    margin: auto;
+    font-size: 20px;
+    font-size: clamp(1.5rem, 1.5vw + 0.6rem, 2.5rem);
+    line-height: 2;
+    text-align: justify;
+    word-wrap: break-word;
+    line-break: strict;
+    font-family: "Amiri", serif;
+    position: relative;
+    align-items: center;
+    .pageData {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 10px 0;
+      flex-direction: row-reverse;
+
+      .pageNum {
+        // margin-top: 20px;
+        font-size: 14px;
+        text-align: center;
+        color: var(--biegColor);
+      }
+      .pagesSlider {
+        display: flex;
+        border-radius: 20px;
+        margin: 0;
+        .slide {
+          color: var(--lightColor);
+          &:hover {
+            color: var(--biegColor);
+          }
         }
-        &:hover {
-          background-color: var(--mainColor) !important;
-        }
-        &:hover::after {
-          right: 0;
-          opacity: 0.5;
-          background-color: var(--cyanColor);
-          // background-color: var(--mainColor);
-        }
+
+        // flex-direction: column;
       }
     }
   }
 
-  .ayasContainer {
-    height: 100vh;
-    max-width: 667px;
-    overflow-y: scroll;
-    padding: 15px;
-    padding-top: 60px;
-    margin: 0px auto;
-    margin-top: 20px;
-    scroll-behavior: smooth;
+  .ayah {
+    // display: inline-block;
+    // margin-right: 5px;
+    background-color: transparent;
+    box-shadow: none;
+    border: none;
+    color: var(--lightColor);
     position: relative;
-    // display: flex;
-    // flex-direction: column;
-    // gap: 20px;
-
-    .page {
-      max-width: 100%;
-      min-height: calc(100% - 40px);
-      // aspect-ratio: 3/2;
-      padding: auto;
-      margin: auto;
-      font-size: 20px;
-      font-size: clamp(1.5rem, 1.5vw + 0.3rem, 2.5rem);
-      line-height: 1.7;
-      text-align: justify;
-      word-wrap: break-word;
-      line-break: strict;
-      font-family: "Amiri", serif;
+    cursor: pointer;
+    transition: 0.3s;
+    .seperatable {
+      margin: 0px 15px;
+      width: 10px;
+      height: 10px;
       position: relative;
-      align-items: center;
-      .pageData {
-        width: 100%;
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-        margin: 0;
-        flex-direction: row-reverse;
 
-        .pageNum {
-          // margin-top: 20px;
-          font-size: 14px;
-          text-align: center;
-          color: var(--biegColor);
-        }
-        .pagesSlider {
-          display: flex;
-          border-radius: 20px;
-          margin: 0;
-          .slide {
-            color: var(--lightColor);
-            &:hover {
-              color: var(--biegColor);
-            }
-          }
-
-          // flex-direction: column;
-        }
+      .seperatableIcon,
+      .seperatablenum {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        color: var(--biegColor);
+      }
+      .seperatablenum {
+        font-size: 10px;
       }
     }
-    .ayah {
-      // display: inline-block;
-      // margin-right: 5px;
-      background-color: transparent;
-      box-shadow: none;
-      border: none;
-      color: var(--lightColor);
-      position: relative;
-      cursor: pointer;
-      transition: 0.3s;
-      .seperatable {
-        margin: 0px 15px;
-        width: 10px;
-        height: 10px;
-        position: relative;
-
-        .seperatableIcon,
-        .seperatablenum {
-          position: absolute;
-          left: 50%;
-          top: 50%;
-          transform: translate(-50%, -50%);
-          color: var(--biegColor);
-        }
-        .seperatablenum {
-          font-size: 10px;
-        }
-      }
-      &:hover {
-        color: cyan;
-      }
-      .tafsirPop {
-        // position: absolute;
-        // top: 0;
-        // left: 50%;
-        // width: 350px;
-        // height: fit-content;
-        // background-color: var(--biegColor);
-        // color: var(--secondaryColor);
-        // padding: 10px;
-      }
+    &:hover {
+      color: var(--cyanColor);
     }
+  }
+
+  .pageFooter {
+    position: sticky;
+    right: 100%;
+    bottom: 0px;
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+
     .surahSliderParent {
-      position: sticky;
-      right: 100%;
-      bottom: 0px;
       font-size: 12px;
       display: flex;
       flex-direction: row;
@@ -264,10 +257,53 @@
         padding: 5px;
         background-color: var(--secondaryColor);
         cursor: pointer;
+        transition: 0.3s;
+        &:hover {
+          background-color: var(--biegColor);
+          color: var(--mainColor);
+        }
       }
       // width: 100%;
     }
+    .upBtn {
+      font-size: 14px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 40px;
+      width: 40px;
+      cursor: pointer;
+      border-radius: 50%;
+      padding: 18px 5px;
+      background-color: var(--mainColor);
+      color: var(--lightColor);
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: 0.3s;
+      &:hover {
+        background-color: var(--biegColor);
+        color: var(--mainColor);
+      }
+    }
   }
+}
+
+.tafsirPopup {
+  position: sticky;
+  top: 0;
+  // left: 50%;
+  width: 100%;
+  height: auto;
+  color: var(--secondaryColor);
+  backdrop-filter: blur(10px);
+  padding: 10px;
+  z-index: 200;
+  font-size: 16px;
+  transition: 0.3;
+  color: var(--lightColor);
+  border-radius: 10px;
+  font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
+  // background-color: var(--biegColor);
 }
 
 @media (max-width: 767px) {
@@ -280,4 +316,9 @@
   background-color: var(--secondaryColor);
   transition: 0.3s;
   color: var(--lightColor);
+}
+
+::-webkit-scrollbar {
+  width: 0;
+  display: none !important;
 }

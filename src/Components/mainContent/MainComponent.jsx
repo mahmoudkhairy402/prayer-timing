@@ -72,50 +72,89 @@ function MainComponent() {
     };
   }, [timing]);
 
+  // const countDownTimer = () => {
+  //   let timeNow = moment();
+  //   let Fajr = moment(timing["Fajr"], "hh:mm");
+  //   let Dhuhr = moment(timing["Dhuhr"], "hh:mm");
+  //   let Asr = moment(timing["Asr"], "hh:mm");
+  //   let Maghrib = moment(timing["Maghrib"], "hh:mm");
+  //   let Isha = moment(timing["Isha"], "hh:mm");
+
+  //   // console.log(timeNow.isAfter(Fajr));
+  //   let prayerIndex = null;
+  //   if (timeNow.isAfter(Fajr) && timeNow.isBefore(Dhuhr)) {
+  //     // console.log("next is duhr");
+  //     prayerIndex = 1;
+  //   } else if (timeNow.isAfter(Dhuhr) && timeNow.isBefore(Asr)) {
+  //     // console.log("next is Asr");
+  //     prayerIndex = 2;
+  //   } else if (timeNow.isAfter(Asr) && timeNow.isBefore(Maghrib)) {
+  //     // console.log("next is Maghrib");
+  //     prayerIndex = 3;
+  //   } else if (timeNow.isAfter(Maghrib) && timeNow.isBefore(Isha)) {
+  //     // console.log("next is Isha");
+
+  //     prayerIndex = 4;
+  //   } else {
+  //     console.log("next is Fajr");
+  //     prayerIndex = 0;
+  //   }
+  //   setnextPrayerIndex(prayerIndex);
+  //   let nextPrayerTime = timing[prayerArray[prayerIndex].key];
+  //   // console.log(
+  //   //   "🚀 ~ file: MainComponent.jsx:116 ~ countDownTimer ~ nextPrayerTime:",
+  //   //   nextPrayerTime
+  //   // );
+  //   let remainTime = moment(nextPrayerTime, "hh:mm").diff(timeNow);
+
+  //   if (remainTime < 0) {
+  //     const midNightDiff = moment("11:59:59", "hh:mm:ss").diff(timeNow);
+  //     const FajrToMidNightDiff = moment(nextPrayerTime, "hh:mm").diff(
+  //       moment("00:00:00", "hh:mm:ss")
+  //     );
+  //     let fajrRemainTime = midNightDiff + FajrToMidNightDiff;
+  //     remainTime = fajrRemainTime;
+  //   }
+
+  //   let remainTimeDuration = moment.duration(remainTime);
+  //   setTimer(
+  //     `${remainTimeDuration.hours()}:${remainTimeDuration.minutes()}:${remainTimeDuration.seconds()}`
+  //   );
+  // };
   const countDownTimer = () => {
     let timeNow = moment();
-    let Fajr = moment(timing["Fajr"], "hh:mm");
-    let Dhuhr = moment(timing["Dhuhr"], "hh:mm");
-    let Asr = moment(timing["Asr"], "hh:mm");
-    let Maghrib = moment(timing["Maghrib"], "hh:mm");
-    let Isha = moment(timing["Isha"], "hh:mm");
+    let Fajr = moment(timing["Fajr"], "HH:mm");
+    let Dhuhr = moment(timing["Dhuhr"], "HH:mm");
+    let Asr = moment(timing["Asr"], "HH:mm");
+    let Maghrib = moment(timing["Maghrib"], "HH:mm");
+    let Isha = moment(timing["Isha"], "HH:mm");
 
-    console.log(timeNow.isAfter(Fajr));
     let prayerIndex = null;
-    if (timeNow.isAfter(Fajr) && timeNow.isBefore(Dhuhr)) {
-      // console.log("next is duhr");
-      prayerIndex = 1;
-    } else if (timeNow.isAfter(Dhuhr) && timeNow.isBefore(Asr)) {
-      // console.log("next is Asr");
-      prayerIndex = 2;
-    } else if (timeNow.isAfter(Asr) && timeNow.isBefore(Maghrib)) {
-      // console.log("next is Maghrib");
-      prayerIndex = 3;
-    } else if (timeNow.isAfter(Maghrib) && timeNow.isBefore(Isha)) {
-      // console.log("next is Isha");
+    let nextPrayerTime = null;
 
-      prayerIndex = 4;
+    if (timeNow.isBefore(Fajr)) {
+      prayerIndex = 0; // Next is Fajr
+      nextPrayerTime = Fajr;
+    } else if (timeNow.isBefore(Dhuhr)) {
+      prayerIndex = 1; // Next is Dhuhr
+      nextPrayerTime = Dhuhr;
+    } else if (timeNow.isBefore(Asr)) {
+      prayerIndex = 2; // Next is Asr
+      nextPrayerTime = Asr;
+    } else if (timeNow.isBefore(Maghrib)) {
+      prayerIndex = 3; // Next is Maghrib
+      nextPrayerTime = Maghrib;
+    } else if (timeNow.isBefore(Isha)) {
+      prayerIndex = 4; // Next is Isha
+      nextPrayerTime = Isha;
     } else {
-      // console.log("next is Fajr");
-      prayerIndex = 0;
+      prayerIndex = 0; // After Isha, next is Fajr of the next day
+      nextPrayerTime = Fajr.add(1, "day");
     }
+
     setnextPrayerIndex(prayerIndex);
-    let nextPrayerTime = timing[prayerArray[prayerIndex].key];
-    // console.log(
-    //   "🚀 ~ file: MainComponent.jsx:116 ~ countDownTimer ~ nextPrayerTime:",
-    //   nextPrayerTime
-    // );
-    let remainTime = moment(nextPrayerTime, "hh:mm").diff(timeNow);
 
-    if (remainTime < 0) {
-      const midNightDiff = moment("11:59:59", "hh:mm:ss").diff(timeNow);
-      const FajrToMidNightDiff = moment(nextPrayerTime, "hh:mm").diff(
-        moment("00:00:00", "hh:mm:ss")
-      );
-      let fajrRemainTime = midNightDiff + FajrToMidNightDiff;
-      remainTime = fajrRemainTime;
-    }
-
+    let remainTime = nextPrayerTime.diff(timeNow);
     let remainTimeDuration = moment.duration(remainTime);
     setTimer(
       `${remainTimeDuration.hours()}:${remainTimeDuration.minutes()}:${remainTimeDuration.seconds()}`

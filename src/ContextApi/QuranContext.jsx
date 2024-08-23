@@ -29,11 +29,18 @@ const QuranProvider = ({ children }) => {
     setSurah(response.data.data);
   };
 
-  const getReaders = async () => {
-    const response = await axios.get(
-      "https://api.alquran.cloud/v1/edition?format=audio&language=ar&type=versebyverse"
-    );
-    setReaders(response.data.data);
+  const getReaders = async (type) => {
+    if (type === "ayah") {
+      const response = await axios.get(
+        "https://api.alquran.cloud/v1/edition?format=audio&language=ar"
+      );
+      setReaders(response.data.data);
+    } else if (type === "surah") {
+      const response = await axios.get(
+        "https://raw.githubusercontent.com/islamic-network/cdn/master/info/cdn_surah_audio.json"
+      );
+      setReaders(response.data);
+    }
   };
 
   //المشكله ان في شيوخ شفاله مع السور ومش شفاله مع الايات والعكس و هنثبت السور دلوقتي علي العقاسي لحد منحلها

@@ -4,14 +4,18 @@ import { QuranContext } from "../../ContextApi/QuranContext";
 import { FaCircleNotch } from "react-icons/fa6";
 import { LiaQuranSolid } from "react-icons/lia";
 import { IoIosArrowDropright, IoIosArrowDropleft } from "react-icons/io";
+import { FaArrowTurnUp } from "react-icons/fa6";
+
 import { FaBookQuran } from "react-icons/fa6";
 import { AiOutlinePauseCircle } from "react-icons/ai";
 import { IoPlayCircleOutline } from "react-icons/io5";
+import { FaMosque } from "react-icons/fa";
 
 import styles from "./iqraa.module.scss";
 
 export default function Iqraa() {
   const [active, setActive] = useState("surah");
+  const [readerType, setReadertype] = useState("ayah");
   const [reader, setReader] = useState({
     identifier: "ar.husary",
     language: "ar",
@@ -24,10 +28,12 @@ export default function Iqraa() {
   const [activeView, setActiveView] = useState({});
   const [searchQuery, setSearchQuery] = useState("");
   const [currentAudio, setCurrentAudio] = useState(null);
+  console.log("🚀 ~ Iqraa ~ currentAudio:", currentAudio);
+
   const [playingSurah, setPlayingSurah] = useState(null); // Track the currently playing Surah
   const [playState, setPlayState] = useState(false);
   const [tafsirPop, setTafsirPop] = useState(false);
-  console.log("🚀 ~ Iqraa ~ tafsirPop:", tafsirPop);
+
   const [selectedAyah, setSelectedAyah] = useState(null);
 
   const {
@@ -48,8 +54,7 @@ export default function Iqraa() {
     juz,
     surahAudio,
   } = useContext(QuranContext);
-  console.log("🚀 ~ Iqraa ~ tafsir:", tafsir);
-  console.log("🚀 ~ Iqraa ~ ayah:", ayah);
+  console.log("🚀 ~ Iqraa ~ quranMeta:", quranMeta);
   console.log("🚀 ~ Iqraa ~ readers:", readers);
 
   const handleNextPage = () => {
@@ -74,7 +79,7 @@ export default function Iqraa() {
     if (currentSurahNumber < 114) {
       getSurah(currentSurahNumber + 1);
     } else {
-      getSurah(114);
+      getSurah(1);
     }
   };
 
@@ -83,7 +88,7 @@ export default function Iqraa() {
     if (currentSurahNumber > 1) {
       getSurah(currentSurahNumber - 1);
     } else {
-      getSurah(1);
+      getSurah(114);
     }
   };
 
@@ -113,7 +118,9 @@ export default function Iqraa() {
   };
 
   const handleClickAyah = (ayah) => {
-    // console.log("🚀🚀🚀 ~ handleClickAyah ~ ayah:", ayah);
+    //
+    handleChangeReaderType("ayah");
+
     getAyah(ayah?.number, reader?.identifier);
     setSelectedAyah(ayah);
     setTafsirPop(true);
@@ -133,16 +140,7 @@ export default function Iqraa() {
   }, [ayah]);
 
   const playSurahAudio = (surahNumber) => {
-    setReader({
-      identifier: "ar.alafasy",
-      language: "ar",
-      name: "مشاري العفاسي",
-      englishName: "Alafasy",
-      format: "audio",
-      type: "versebyverse",
-      direction: null,
-    });
-
+    handleChangeReaderType("surah");
     if (currentAudio) {
       currentAudio.pause();
       setCurrentAudio(null);
@@ -171,8 +169,11 @@ export default function Iqraa() {
 
   useEffect(() => {
     getSurah(1);
-    getReaders();
   }, []);
+
+  useEffect(() => {
+    getReaders(readerType);
+  }, [readerType]);
 
   useEffect(() => {
     if (active === "surah" && surah) {
@@ -211,7 +212,15 @@ export default function Iqraa() {
   };
 
   const groupedAyahs = groupAyahsByPage(activeView.ayahs || []);
-  console.log("🚀 ~ Iqraa ~ groupedAyahs:", groupedAyahs);
+  useEffect(() => {
+    if (readers && readers.length > 0) {
+      setReader(readers[0]);
+    }
+  }, [readerType, readers]);
+
+  const handleChangeReaderType = async (type) => {
+    setReadertype(type);
+  };
 
   return (
     <>
@@ -228,49 +237,34 @@ export default function Iqraa() {
               {active == "surah"
                 ? `${activeView.name} | ${activeView.revelationType} | ${activeView.englishName}`
                 : ""}
-              <LiaQuranSolid className="ms-1" size={25} />
+              <FaMosque className="mx-1" size={25} />
             </button>
-
-            <span className="dropdown">
-              <button
-                className={`${styles.togleCanvas}  dropdown-toggle`}
-                type="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                {reader?.name}
-                <FaBookQuran className="ms-1" size={25} />
-              </button>
-              <ul className={`dropdown-menu ${styles.redersUl}`}>
-                {readers ? (
-                  readers?.map((reader) => {
-                    return (
-                      <li
-                        className={`dropdown-item ${styles.redersLi}`}
-                        key={reader?.identifier}
-                        onClick={() => {
-                          handleChangeReader(reader);
-                        }}
-                      >
-                        {reader.name}
-                      </li>
-                    );
-                  })
-                ) : (
-                  <li key={reader?.identifier}>
-                    <a class="dropdown-item" href="#">
-                      Loading...
-                    </a>
-                  </li>
-                )}
-              </ul>
-            </span>
           </div>
 
           <div className={styles.ayasContainer}>
+            {tafsirPop && selectedAyah && (
+              <div className={styles.tafsirPopup}>
+                <button
+                  className="btn btn-close text-bg-light"
+                  onClick={() => setTafsirPop(false)}
+                ></button>
+
+                <p>{tafsir?.arabic_text}</p>
+                <p>{tafsir?.translation}</p>
+              </div>
+            )}
             {Object.keys(groupedAyahs).length > 0 ? (
               Object.keys(groupedAyahs).map((page) => (
-                <div className={styles.page} key={page}>
+                <div className={styles.page} key={page} id="topPage">
+                  <div className={styles.pageData}>
+                    <div className={styles.pageNum}>Page {page}</div>
+                    <div className={styles.pageNum} id={page}>
+                      الجزء {groupedAyahs[page][0]?.juz}
+                    </div>
+                    <div className={styles.pageNum}>
+                      ربع الحزب {groupedAyahs[page][0]?.hizbQuarter}
+                    </div>
+                  </div>
                   {groupedAyahs[page].map((ayah) => (
                     <span
                       onClick={() => {
@@ -279,17 +273,13 @@ export default function Iqraa() {
                       className={styles.ayah}
                       key={ayah.number}
                     >
-                      {/* {tafsirPop && selectedAyah && (
-                        <div className={styles.tafsirPopup}>
-                          <button
-                            className="btn btn-close"
-                            onClick={() => setTafsirPop(false)}
-                          ></button>
-
-                          <p>{tafsir?.text}</p>
-                        </div>
-                      )} */}
                       {ayah.text}
+                      {ayah.sajda ? (
+                        <FaMosque size={25} color={"#508dbc"} />
+                      ) : (
+                        ""
+                      )}
+
                       <span className={styles.seperatable}>
                         <FaCircleNotch className={styles.seperatableIcon} />
                         <p className={styles.seperatablenum}>
@@ -299,14 +289,7 @@ export default function Iqraa() {
                       </span>
                     </span>
                   ))}
-                  {/* {page == Object.keys(groupedAyahs).length ? "" : ""} */}
                   <div className={styles.pageData}>
-                    <div className={styles.pageNum} id={page}>
-                      Page {page}
-                    </div>
-                    <div className={styles.pageNum} id={page}>
-                      الجزء {groupedAyahs[page][0]?.juz}
-                    </div>
                     {active == "page" ? (
                       <div className={styles.pagesSlider}>
                         <div className={styles.slide} onClick={handleNextPage}>
@@ -321,7 +304,7 @@ export default function Iqraa() {
                       </div>
                     ) : (
                       <div className={styles.pagesSlider}>
-                        <a className={styles.slide} href={`#${page}`}>
+                        <a className={styles.slide} href={`#${+page + 1}`}>
                           <IoIosArrowDropright />
                         </a>
                         <a className={styles.slide} href={`#${page - 2}`}>
@@ -330,6 +313,7 @@ export default function Iqraa() {
                       </div>
                     )}
                   </div>
+                  {/* {page == Object.keys(groupedAyahs).length ? "" : ""} */}
                 </div>
               ))
             ) : (
@@ -338,29 +322,43 @@ export default function Iqraa() {
               </p>
             )}
             {active == "surah" ? (
-              <div className={styles.surahSliderParent}>
-                <span onClick={handleNextSurah} className={styles.surahSlider}>
-                  next surah
+              <div className={styles.pageFooter}>
+                <span className={styles.surahSliderParent}>
+                  <span
+                    onClick={handleNextSurah}
+                    className={styles.surahSlider}
+                    href="#topPage"
+                  >
+                    next surah
+                  </span>
+                  {surah?.name}
+                  <span
+                    onClick={handlePreviousSurah}
+                    className={styles.surahSlider}
+                  >
+                    prev surah
+                  </span>
                 </span>
-                {surah?.name}
-                <span
-                  onClick={handlePreviousSurah}
-                  className={styles.surahSlider}
-                >
-                  prev surah
-                </span>
+                <a className={styles.upBtn} href="#topPage">
+                  <FaArrowTurnUp />
+                </a>
               </div>
             ) : active == "juz" ? (
-              <div className={styles.surahSliderParent}>
-                <span onClick={handleNextJuz} className={styles.surahSlider}>
-                  juz {juz?.number == 30 ? 1 : juz?.number + 1}
+              <div className={styles.pageFooter}>
+                <span className={styles.surahSliderParent}>
+                  <span onClick={handleNextJuz} className={styles.surahSlider}>
+                    juz {juz?.number == 30 ? 1 : juz?.number + 1}
+                  </span>
+                  <span
+                    onClick={handlePreviousJuz}
+                    className={styles.surahSlider}
+                  >
+                    juz {juz?.number == 1 ? 30 : juz?.number - 1}
+                  </span>
                 </span>
-                <span
-                  onClick={handlePreviousJuz}
-                  className={styles.surahSlider}
-                >
-                  juz {juz?.number == 1 ? 30 : juz?.number - 1}
-                </span>
+                <a className={styles.upBtn} href="#topPage">
+                  <FaArrowTurnUp />
+                </a>
               </div>
             ) : (
               ""
@@ -386,6 +384,71 @@ export default function Iqraa() {
             ></button>
           </div>
           <div className=" p-0 m-0">
+            <div className="d-flex w-100">
+              <span className="dropdown ">
+                <button
+                  className={`${styles.togleCanvas}  dropdown-toggle`}
+                  type="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  نوع القراءه
+                </button>
+                <ul className={`dropdown-menu ${styles.redersUl}`}>
+                  <li
+                    className={`dropdown-item ${styles.redersLi}`}
+                    onClick={() => {
+                      handleChangeReaderType("surah");
+                    }}
+                  >
+                    قارئ السوره
+                  </li>
+                  <li
+                    className={`dropdown-item ${styles.redersLi}`}
+                    onClick={() => {
+                      handleChangeReaderType("ayah");
+                    }}
+                  >
+                    قارئ الايه
+                  </li>
+                </ul>
+              </span>
+              <span className="dropdown">
+                <button
+                  className={`${styles.togleCanvas}  dropdown-toggle`}
+                  type="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  {reader?.name}
+                  <LiaQuranSolid className="mx-1" size={25} />
+                  {/* <FaMosque className="mx-1" size={25} /> */}
+                </button>
+                <ul className={`dropdown-menu ${styles.redersUl}`}>
+                  {readers ? (
+                    readers?.map((reader) => {
+                      return (
+                        <li
+                          className={`dropdown-item ${styles.redersLi}`}
+                          key={reader?.identifier}
+                          onClick={() => {
+                            handleChangeReader(reader);
+                          }}
+                        >
+                          {reader.name}
+                        </li>
+                      );
+                    })
+                  ) : (
+                    <li key={reader?.identifier}>
+                      <a class="dropdown-item" href="#">
+                        Loading...
+                      </a>
+                    </li>
+                  )}
+                </ul>
+              </span>
+            </div>
             <div className={styles.filter}>
               <div
                 className={
@@ -418,7 +481,6 @@ export default function Iqraa() {
                 الصفحة
               </div>
             </div>
-
             <form action="" className={styles.search}>
               <input
                 type="text"
@@ -428,7 +490,7 @@ export default function Iqraa() {
                 onChange={handleSearchChange}
               />
             </form>
-            <ul>
+            <ul className={styles.searchResult}>
               {active === "surah" && filteredSurahs
                 ? filteredSurahs.map((ele, index) => (
                     <li

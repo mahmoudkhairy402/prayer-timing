@@ -7,9 +7,9 @@ export default function Navbar() {
     <>
       <nav className={`navbar navbar-expand-lg p-0 ${styles.navbar}`}>
         <div className="container-fluid">
-          <a className="logoContainer" href="#">
+          <Link className="logoContainer" to="/">
             <img src={logo} alt="logo" srcset="" />
-          </a>
+          </Link>
           <button
             className="navbar-toggler"
             type="button"
@@ -24,13 +24,13 @@ export default function Navbar() {
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
               <li className="nav-item">
-                <a
+                <Link
                   className={`nav-link ${styles.navLink}`}
                   aria-current="page"
-                  href="#iqraa"
+                  to="/iqraa"
                 >
                   اقرأ
-                </a>
+                </Link>
               </li>
             </ul>
             {/* <form className="d-flex" role="search">
