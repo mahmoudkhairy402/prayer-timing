@@ -9,8 +9,8 @@
     width: 320px !important;
     background-color: var(--biegColor);
     backdrop-filter: blur(5px) brightness(0.8) !important;
-    height: 100vh;
-
+    height: 100vh !important;
+    overflow: scroll;
     .filter {
       width: 100%;
       display: flex;
@@ -46,9 +46,10 @@
       flex-direction: column;
       background-color: var(--mainColor);
       color: var(--biegColor);
-      height: 100vh;
+      height: 60vh;
       overflow: scroll;
       padding: 0;
+      margin: auto 0 0 0;
       li {
         width: 100%;
         padding: 10px;
@@ -80,7 +81,7 @@
   .togglers {
     max-width: 100%;
     position: absolute;
-    top: 0;
+    top: 2px;
     right: 0px;
     background-color: var(--biegColor) !important;
     box-shadow: none;
@@ -147,7 +148,7 @@
   padding: 15px;
   padding-top: 60px;
   margin: 0px auto;
-  margin-top: 20px;
+  // margin-top: 20px;
   scroll-behavior: smooth;
   position: relative;
   // display: flex;

@@ -22,14 +22,23 @@ export default function Navbar() {
             <span className="navbar-toggler-icon" />
           </button>
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+            <ul className="navbar-nav me-auto ms-3 mb-2 mb-lg-0">
               <li className="nav-item">
                 <Link
-                  className={`nav-link ${styles.navLink}`}
+                  className={`nav-link ${styles.navLink} ms-2`}
                   aria-current="page"
                   to="/iqraa"
                 >
                   اقرأ
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link
+                  className={`nav-link ${styles.navLink} ms-2`}
+                  aria-current="page"
+                  to="/prayer"
+                >
+                  مواقيت الصلاة
                 </Link>
               </li>
             </ul>

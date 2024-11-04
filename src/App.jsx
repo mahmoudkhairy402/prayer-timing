@@ -12,8 +12,10 @@ function App() {
         <div style={{ direction: "rtl" }}>
           <div className="">
             <Routes>
-              <Route path="/" element={<MainComponent />} />
-              <Route path="/iqraa" element={<Iqraa />} />
+              <Route path="/prayer" element={<MainComponent />} />
+              {["/", "iqraa"].map((ele, index) => (
+                <Route path={ele} key={index} element={<Iqraa />} />
+              ))}
             </Routes>
           </div>
         </div>
