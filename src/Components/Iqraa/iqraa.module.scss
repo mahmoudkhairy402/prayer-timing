@@ -9,8 +9,10 @@
     width: 320px !important;
     background-color: var(--biegColor);
     backdrop-filter: blur(5px) brightness(0.8) !important;
-    height: 100vh !important;
-    overflow: scroll;
+    max-height: 100vh !important;
+    overflow-y: scroll;
+    overflow-x: hidden;
+
     .filter {
       width: 100%;
       display: flex;
@@ -46,10 +48,11 @@
       flex-direction: column;
       background-color: var(--mainColor);
       color: var(--biegColor);
-      height: 60vh;
+      margin: auto 0 0 0;
+      height: 70vh;
       overflow: scroll;
       padding: 0;
-      margin: auto 0 0 0;
+
       li {
         width: 100%;
         padding: 10px;
