@@ -232,7 +232,7 @@
       }
     }
     &:hover {
-      color: var(--cyanColor);
+      color: rgb(199, 227, 151);
     }
   }
 
@@ -332,6 +332,6 @@
   background-color: #0000006e !important;
   // padding: 5px;
   border-radius: 10px;
-  text-decoration: underline;
+  // text-decoration: underline;
   transition: 1s;
 }
