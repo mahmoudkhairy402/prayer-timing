@@ -12,6 +12,7 @@ import { IoPlayCircleOutline } from "react-icons/io5";
 import { FaMosque } from "react-icons/fa";
 
 import styles from "./iqraa.module.scss";
+import SearchBar from "../search/searchBar";
 
 export default function Iqraa() {
   const [active, setActive] = useState("surah");
@@ -28,13 +29,11 @@ export default function Iqraa() {
   const [activeView, setActiveView] = useState({});
   const [searchQuery, setSearchQuery] = useState("");
   const [currentAudio, setCurrentAudio] = useState(null);
-  console.log("🚀 ~ Iqraa ~ currentAudio:", currentAudio);
-
   const [playingSurah, setPlayingSurah] = useState(null); // Track the currently playing Surah
   const [playState, setPlayState] = useState(false);
   const [tafsirPop, setTafsirPop] = useState(false);
-
   const [selectedAyah, setSelectedAyah] = useState(null);
+  const [highlightedAyahId, setHighlightedAyahId] = useState(null); // Test with a known Ayah ID
 
   const {
     quranMeta,
@@ -54,8 +53,6 @@ export default function Iqraa() {
     juz,
     surahAudio,
   } = useContext(QuranContext);
-  console.log("🚀 ~ Iqraa ~ quranMeta:", quranMeta);
-  console.log("🚀 ~ Iqraa ~ readers:", readers);
 
   const handleNextPage = () => {
     const currentPageNumber = pageAyahs?.number;
@@ -123,6 +120,7 @@ export default function Iqraa() {
 
     getAyah(ayah?.number, reader?.identifier);
     setSelectedAyah(ayah);
+    setHighlightedAyahId(ayah.number);
     setTafsirPop(true);
   };
 
@@ -270,7 +268,11 @@ export default function Iqraa() {
                       onClick={() => {
                         handleClickAyah(ayah);
                       }}
-                      className={styles.ayah}
+                      className={
+                        ayah.number === highlightedAyahId
+                          ? `${styles.ayah} ${styles.highlighted}`
+                          : `${styles.ayah}`
+                      }
                       key={ayah.number}
                     >
                       {ayah.text}
@@ -307,7 +309,7 @@ export default function Iqraa() {
                         <a className={styles.slide} href={`#${+page + 1}`}>
                           <IoIosArrowDropright />
                         </a>
-                        <a className={styles.slide} href={`#${page - 2}`}>
+                        <a className={styles.slide} href={`#${page - 1}`}>
                           <IoIosArrowDropleft />
                         </a>
                       </div>
@@ -383,6 +385,12 @@ export default function Iqraa() {
               aria-label="Close"
             ></button>
           </div>
+          <SearchBar
+            setActive={setActive}
+            setHighlightedAyahId={setHighlightedAyahId}
+            highlightedAyahId={highlightedAyahId}
+          />
+          <hr className="mt-0" />
           <div className=" p-0 m-0">
             <div className="d-flex w-100">
               <span className="dropdown ">

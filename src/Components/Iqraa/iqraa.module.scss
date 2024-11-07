@@ -326,3 +326,12 @@
   width: 0;
   display: none !important;
 }
+
+.highlighted {
+  // color: rgb(83, 212, 186) !important;
+  background-color: #0000006e !important;
+  // padding: 5px;
+  border-radius: 10px;
+  text-decoration: underline;
+  transition: 1s;
+}

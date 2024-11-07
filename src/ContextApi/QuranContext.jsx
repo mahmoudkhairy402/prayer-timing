@@ -13,6 +13,22 @@ const QuranProvider = ({ children }) => {
   const [tafsir, setTafsir] = useState(null);
   const [pageAyahs, setPageAyahs] = useState(null);
   const [surahAudio, setSurahAudio] = useState(null);
+  const [searchResults, setSearchResults] = useState([]); // New state for search results
+
+  const searchQuran = async (query) => {
+    try {
+      const response = await axios.get(
+        `https://api.quran.com/api/v4/search?query=${query}`
+      );
+      console.log(
+        "🚀 ~ searchQuran ~ response:",
+        response?.data?.search?.results
+      );
+      setSearchResults(response?.data?.search?.results); // Set search results
+    } catch (error) {
+      console.error("Error fetching search results:", error);
+    }
+  };
 
   useEffect(() => {
     const fetchQuranMeta = async () => {
@@ -109,6 +125,8 @@ const QuranProvider = ({ children }) => {
         getPageAyahs,
         getJuz,
         getSurahAudio,
+        searchQuran,
+        searchResults,
       }}
     >
       {children}
