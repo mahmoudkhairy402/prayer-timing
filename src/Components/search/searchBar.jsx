@@ -7,6 +7,7 @@ const SearchBar = ({ setActive, setHighlightedAyahId, highlightedAyahId }) => {
   const {
     searchQuran,
     searchResults,
+    setSearchResults,
     ayah,
     getAyahWithSurah,
     getPageAyahs,
@@ -61,6 +62,11 @@ const SearchBar = ({ setActive, setHighlightedAyahId, highlightedAyahId }) => {
 
     setHighlightedAyahId(result.verse_id);
   };
+  const clearSearch = async () => {
+    setQuery("");
+    setSearchResults([]);
+    // await searchQuran("");
+  };
 
   return (
     <div style={{ padding: "10px" }}>
@@ -72,6 +78,12 @@ const SearchBar = ({ setActive, setHighlightedAyahId, highlightedAyahId }) => {
           className="w-100 mx-auto"
           placeholder="Search in Quran..."
         />
+        {query !== "" && (
+          <span className={styles.clearSearch} onClick={clearSearch}>
+            Clear
+          </span>
+        )}
+
         {/* <button type="submit" style={{ padding: "8px" }}>
           Search
         </button> */}

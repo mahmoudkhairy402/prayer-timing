@@ -8,6 +8,8 @@ import asr from "../../assets/asr-prayer-mosque.png";
 import magrip from "../../assets/sunset-prayer-mosque.png";
 import ishaa from "../../assets/night-prayer-mosque.png";
 import styles from "./mainContent.module.scss";
+import { delay, easeInOut, motion } from "framer-motion";
+
 function MainComponent() {
   const [timing, setTiming] = useState({
     Fajr: "",
@@ -166,11 +168,34 @@ function MainComponent() {
     const country = city === "Cairo" ? "Egypt" : "Saudi Arabia";
     setLocation({ city, country });
   };
-
+  const nextPray = prayerArray[nextPrayerIndex].displayName;
   return (
     <div className={styles.landing}>
-      <div className="row justify-content-center m-0 pe-0">
-        <div className="col-md-6 text-center">
+      <motion.div
+        className="row justify-content-center m-0 pe-0"
+        variants={{
+          hidden: { opacity: 0 },
+          show: {
+            opacity: 1,
+            transition: {
+              staggerChildren: 0.3,
+              delay: 0.3,
+            },
+          },
+        }}
+        initial="hidden"
+        animate="show"
+      >
+        <motion.div
+          className="col-md-6 text-center"
+          variants={{
+            hidden: { opacity: 0, y: 50 },
+            show: { opacity: 1, y: 0 },
+            transition: { duration: 0.3, ease: "easeInOut" },
+          }}
+          initial="hidden"
+          animate="show"
+        >
           <h3 className={styles.dynamicFont}>{date}</h3>
           {location.city === "Cairo" ? (
             <h2 className={styles.dynamicFont}>القاهرة, مصر</h2>
@@ -187,26 +212,47 @@ function MainComponent() {
           ) : (
             <h2>Unknown City</h2>
           )}
-        </div>
-        <div className="col-md-6 text-center p-md-0 ">
-          <h3 className={styles.dynamicFont}>
-            متبقي حتي صلاة {prayerArray[nextPrayerIndex].displayName}{" "}
-          </h3>
-          <h2 className={styles.dynamicFont}>{timer}</h2>
-        </div>
-        <div className="col-12 text-center p-md-0">
-          <div className="form-group">
-            {/* <label htmlFor="citySelect">
-              <span
-                style={{
-                  fontSize: "20px",
-                  backgroundColor: "#fff",
-                  padding: "10px",
-                }}
-              >
-                City
-              </span>
-            </label> */}
+        </motion.div>
+        <motion.div
+          className="col-md-6 text-center p-md-0 "
+          variants={{
+            hidden: { opacity: 0, y: 50 },
+            show: { opacity: 1, y: 0 },
+            transition: { duration: 0.6, ease: "easeInOut", delay: 0.6 }, // Adjusted delay for sequencing
+          }}
+          initial="hidden"
+          animate="show"
+        >
+          <h3 className={styles.dynamicFont}>متبقي حتي صلاة {nextPray} </h3>
+          <h2
+            variants={{
+              hidden: { opacity: 0, y: 50 },
+              show: { opacity: 1, y: 0 },
+              transition: { duration: 0.3, ease: easeInOut },
+            }}
+            className={styles.dynamicFont}
+          >
+            {timer}
+          </h2>
+        </motion.div>
+        <motion.div
+          className="col-12 text-center p-md-0"
+          variants={{
+            hidden: { opacity: 0, y: 50 },
+            show: { opacity: 1, y: 0 },
+            transition: { duration: 0.3, ease: "easeInOut", delay: 0.9 },
+          }}
+          initial="hidden"
+          animate="show"
+        >
+          <motion.div
+            className="form-group"
+            variants={{
+              hidden: { opacity: 0, y: 50 },
+              show: { opacity: 1, y: 0 },
+              transition: { duration: 0.3, ease: easeInOut },
+            }}
+          >
             <select
               className="form-control"
               id="citySelect"
@@ -225,17 +271,89 @@ function MainComponent() {
               </option>
               <option value="Madina">المدينة, المملكة العربية السعودية</option>
             </select>
-          </div>
-        </div>
-      </div>
+          </motion.div>
+        </motion.div>
+      </motion.div>
       <hr style={{ borderColor: "#fff", opacity: ".3" }} />
-      <div className="flex-container container">
-        <PrayerCard name="الفجر" time={timing.Fajr} image={fajr} />
-        <PrayerCard name="الظهر" time={timing.Dhuhr} image={duhr} />
-        <PrayerCard name="العصر" time={timing.Asr} image={asr} />
-        <PrayerCard name="المغرب" time={timing.Maghrib} image={magrip} />
-        <PrayerCard name="العشاء" time={timing.Isha} image={ishaa} />
-      </div>
+      <motion.div
+        className="flex-container container"
+        variants={{
+          hidden: { opacity: 0 },
+          show: {
+            opacity: 1,
+            transition: { staggerChildren: 0.25, delay: 0.3 },
+          },
+        }}
+        viewport={{ once: false, amount: 0.3 }}
+        initial="hidden"
+        animate="show"
+      >
+        <motion.div
+          variants={{
+            hidden: { opacity: 0, y: 50 }, // Slide in from below
+            show: {
+              opacity: 1,
+              y: 0,
+              scale: nextPray === "الفجر" ? 1.1 : 1, // Scale up the next prayer card
+              transition: { ease: "easeInOut", duration: 0.5 },
+            },
+          }}
+        >
+          <PrayerCard name="الفجر" time={timing.Fajr} image={fajr} />
+        </motion.div>
+        <motion.div
+          variants={{
+            hidden: { opacity: 0, y: 50 }, // Slide in from below
+            show: {
+              opacity: 1,
+              y: 0,
+              scale: nextPray === "الظهر" ? 1.1 : 1, // Scale up the next prayer card
+              transition: { ease: "easeInOut", duration: 0.5 },
+            },
+          }}
+        >
+          <PrayerCard name="الظهر" time={timing.Dhuhr} image={duhr} />
+        </motion.div>
+        <motion.div
+          variants={{
+            hidden: { opacity: 0, y: 50 }, // Slide in from below
+            show: {
+              opacity: 1,
+              y: 0,
+              scale: nextPray === "العصر" ? 1.1 : 1, // Scale up the next prayer card
+              transition: { ease: "easeInOut", duration: 0.5 },
+            },
+          }}
+        >
+          <PrayerCard name="العصر" time={timing.Asr} image={asr} />
+        </motion.div>
+        <motion.div
+          variants={{
+            hidden: { opacity: 0, y: 50 }, // Slide in from below
+            show: {
+              opacity: 1,
+              y: 0,
+              scale: nextPray === "المغرب" ? 1.1 : 1, // Scale up the next prayer card
+              transition: { ease: "easeInOut", duration: 0.5 },
+            },
+          }}
+        >
+          <PrayerCard name="المغرب" time={timing.Maghrib} image={magrip} />
+        </motion.div>
+        <motion.div
+          variants={{
+            hidden: { opacity: 0, y: 50 }, // Slide in from below
+            show: {
+              opacity: 1,
+              y: 0,
+              scale: nextPray === "العشاء" ? 1.1 : 1,
+              transition: { ease: "easeInOut", duration: 0.5 },
+            },
+          }}
+        >
+          <PrayerCard name="العشاء" time={timing.Isha} image={ishaa} />
+        </motion.div>
+      </motion.div>
     </div>
   );
 }

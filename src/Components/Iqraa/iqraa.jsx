@@ -5,14 +5,16 @@ import { FaCircleNotch } from "react-icons/fa6";
 import { LiaQuranSolid } from "react-icons/lia";
 import { IoIosArrowDropright, IoIosArrowDropleft } from "react-icons/io";
 import { FaArrowTurnUp } from "react-icons/fa6";
-
 import { FaBookQuran } from "react-icons/fa6";
 import { AiOutlinePauseCircle } from "react-icons/ai";
 import { IoPlayCircleOutline } from "react-icons/io5";
 import { FaMosque } from "react-icons/fa";
+import { FaBookOpen } from "react-icons/fa";
+import { IoMdClose } from "react-icons/io";
 
 import styles from "./iqraa.module.scss";
 import SearchBar from "../search/searchBar";
+import { delay, easeInOut, motion } from "framer-motion";
 
 export default function Iqraa() {
   const [active, setActive] = useState("surah");
@@ -31,9 +33,10 @@ export default function Iqraa() {
   const [currentAudio, setCurrentAudio] = useState(null);
   const [playingSurah, setPlayingSurah] = useState(null); // Track the currently playing Surah
   const [playState, setPlayState] = useState(false);
-  const [tafsirPop, setTafsirPop] = useState(false);
   const [selectedAyah, setSelectedAyah] = useState(null);
   const [highlightedAyahId, setHighlightedAyahId] = useState(null); // Test with a known Ayah ID
+  const [tafsirPop, setTafsirPop] = useState(false);
+  const [ayahPop, setAyahPop] = useState(false);
 
   const {
     quranMeta,
@@ -114,37 +117,92 @@ export default function Iqraa() {
     setReader(reader);
   };
 
-  const handleClickAyah = (ayah) => {
-    //
-    handleChangeReaderType("ayah");
-
-    getAyah(ayah?.number, reader?.identifier);
+  const handleClickAyah = async (ayah) => {
+    await getAyah(ayah?.number, reader?.identifier);
     setSelectedAyah(ayah);
     setHighlightedAyahId(ayah.number);
+    setAyahPop(true);
+  };
+
+  const showTafsir = () => {
     setTafsirPop(true);
   };
 
-  useEffect(() => {
+  const stopAyahSound = (e) => {
+    e.stopPropagation();
     if (ayah) {
       if (currentAudio) {
         currentAudio.pause();
+        setPlayState(false);
+        // currentAudio.currentTime = 0;
+      }
+    }
+  };
+
+  const playAyahSound = (e) => {
+    e.stopPropagation();
+
+    if (currentAudio) {
+      // Check if the current audio is the same as the new audio
+      if (currentAudio?.src === ayah?.audio) {
+        if (currentAudio.paused) {
+          currentAudio.play();
+          setPlayState(true);
+        } else {
+          currentAudio.pause(); // Pause if currently playing
+          setPlayState(false);
+        }
+        return; // Exit the function to avoid creating a new audio instance
+      } else {
+        // Pause and reset the current audio if it's a different one
+        currentAudio.pause();
         currentAudio.currentTime = 0;
       }
-      getTafsir(ayah?.surah?.number, ayah?.numberInSurah);
-      const audio = new Audio(ayah?.audio);
-      setCurrentAudio(audio);
-      audio.play();
     }
+
+    // Handle new audio playback
+    handleChangeReaderType("ayah");
+    const audio = new Audio(ayah.audio);
+    setCurrentAudio(audio);
+    setPlayState(true);
+    audio.play();
+
+    // Handle when audio ends
+    audio.onended = () => {
+      setPlayState(false);
+      setCurrentAudio(null);
+    };
+  };
+
+  useEffect(() => {
+    getTafsir(ayah?.surah?.number, ayah?.numberInSurah);
   }, [ayah]);
 
-  const playSurahAudio = (surahNumber) => {
+  const playSurahAudio = (surah) => {
     handleChangeReaderType("surah");
+
     if (currentAudio) {
-      currentAudio.pause();
-      setCurrentAudio(null);
+      // Check if the current audio is the same as the new Surah
+      const newAudioUrl = `https://cdn.islamic.network/quran/audio-surah/128/${reader.identifier}/${surah.number}.mp3`;
+
+      if (currentAudio.src === newAudioUrl) {
+        if (currentAudio.paused) {
+          currentAudio.play();
+          setPlayState(true);
+        } else {
+          currentAudio.pause();
+          setPlayState(false);
+        }
+        return; // Exit if toggling play/pause for the same Surah
+      } else {
+        // Pause and reset the current audio if switching to a new Surah
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+      }
     }
 
-    const audioUrl = `https://cdn.islamic.network/quran/audio-surah/128/${reader.identifier}/${surahNumber}.mp3`;
+    // Play new Surah audio
+    const audioUrl = `https://cdn.islamic.network/quran/audio-surah/128/${reader.identifier}/${surah.number}.mp3`;
     const audio = new Audio(audioUrl);
 
     audio.onended = () => {
@@ -153,7 +211,7 @@ export default function Iqraa() {
     };
 
     setCurrentAudio(audio);
-    setPlayingSurah(surahNumber);
+    setPlayingSurah(surah.number);
     setPlayState(true);
     audio.play();
   };
@@ -166,7 +224,9 @@ export default function Iqraa() {
   };
 
   useEffect(() => {
-    getSurah(1);
+    if (!surah || !juz || !pageAyahs) {
+      getSurah(1);
+    }
   }, []);
 
   useEffect(() => {
@@ -223,8 +283,27 @@ export default function Iqraa() {
   return (
     <>
       <div id="iqraa" className={`${styles.iqraa}`}>
-        <div className={`${styles.iqraaContent} `}>
-          <div className={styles.togglers}>
+        {/* //! main content */}
+        <motion.div
+          className={`${styles.iqraaContent} `}
+          variants={{
+            hidden: { opacity: 0 },
+            show: { opacity: 1, transition: { staggerChildren: 0.3 } },
+          }}
+          initial="hidden"
+          animate="show"
+        >
+          <motion.div
+            className={styles.togglers}
+            variants={{
+              hidden: { opacity: 0, x: 50 },
+              show: {
+                opacity: 1,
+                x: 0,
+              },
+              transition: { duration: 0.5, ease: "easeInOut" },
+            }}
+          >
             <button
               className={styles.togleCanvas}
               type="button"
@@ -237,9 +316,18 @@ export default function Iqraa() {
                 : ""}
               <FaMosque className="mx-1" size={25} />
             </button>
-          </div>
+          </motion.div>
 
-          <div className={styles.ayasContainer}>
+          <motion.div
+            className={styles.ayasContainer}
+            variants={{
+              hidden: { opacity: 0 },
+              show: { opacity: 1, transition: { staggerChildren: 0.3 } },
+            }}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: false, amount: 0.5 }}
+          >
             {tafsirPop && selectedAyah && (
               <div className={styles.tafsirPopup}>
                 <button
@@ -253,44 +341,165 @@ export default function Iqraa() {
             )}
             {Object.keys(groupedAyahs).length > 0 ? (
               Object.keys(groupedAyahs).map((page) => (
-                <div className={styles.page} key={page} id="topPage">
+                <motion.div
+                  className={styles.page}
+                  key={page}
+                  id="topPage"
+                  variants={{
+                    hidden: { opacity: 0 },
+                    show: {
+                      opacity: 1,
+                      y: 0,
+                      transition: { duration: 0.5, ease: "easeInOut" },
+                    },
+                  }}
+                  initial="hidden"
+                  whileInView="show"
+                  viewport={{ once: false, amount: 0.3 }}
+                >
                   <div className={styles.pageData}>
                     <div className={styles.pageNum}>Page {page}</div>
                     <div className={styles.pageNum} id={page}>
-                      الجزء {groupedAyahs[page][0]?.juz}
+                      الجزء {groupedAyahs[page][0]?.juz} -{" "}
+                      {groupedAyahs[page][0]?.surah?.name || activeView.name}
                     </div>
                     <div className={styles.pageNum}>
                       ربع الحزب {groupedAyahs[page][0]?.hizbQuarter}
                     </div>
                   </div>
-                  {groupedAyahs[page].map((ayah) => (
-                    <span
-                      onClick={() => {
-                        handleClickAyah(ayah);
-                      }}
-                      className={
-                        ayah.number === highlightedAyahId
-                          ? `${styles.ayah} ${styles.highlighted}`
-                          : `${styles.ayah}`
-                      }
-                      key={ayah.number}
-                    >
-                      {ayah.text}
-                      {ayah.sajda ? (
-                        <FaMosque size={25} color={"#508dbc"} />
-                      ) : (
-                        ""
-                      )}
 
-                      <span className={styles.seperatable}>
-                        <FaCircleNotch className={styles.seperatableIcon} />
-                        <p className={styles.seperatablenum}>
-                          {" "}
-                          {ayah.numberInSurah}
-                        </p>
+                  {groupedAyahs[page].map((ayah) => {
+                    // Basmala handling
+                    const basmalaPatterns = [
+                      "بِسۡمِ ٱللَّهِ ٱلرَّحۡمَـٰنِ ٱلرَّحِیم",
+                      "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ",
+                    ];
+
+                    const startsWithBasmala = basmalaPatterns.some((pattern) =>
+                      ayah.text.startsWith(pattern)
+                    );
+
+                    const basmala = startsWithBasmala
+                      ? basmalaPatterns.find((pattern) =>
+                          ayah.text.startsWith(pattern)
+                        )
+                      : null;
+
+                    const restOfAyah = startsWithBasmala
+                      ? ayah.text.replace(basmala, "").trim()
+                      : ayah.text;
+
+                    return (
+                      <span
+                        onClick={() => {
+                          handleClickAyah(ayah);
+                        }}
+                        className={
+                          ayah.number === highlightedAyahId
+                            ? `${styles.ayah} ${styles.highlighted}`
+                            : `${styles.ayah}`
+                        }
+                        key={ayah.number}
+                      >
+                        {/* Ayah Popup */}
+                        {ayahPop && selectedAyah.number === ayah.number && (
+                          <div className={styles.ayahPop}>
+                            <span
+                              className="tafseer"
+                              onClick={() => {
+                                showTafsir(selectedAyah);
+                              }}
+                            >
+                              <FaBookOpen />
+                            </span>
+                            <span className="play">
+                              {selectedAyah.number === ayah.number &&
+                              playState ? (
+                                <AiOutlinePauseCircle
+                                  size={25}
+                                  onClick={(e) => {
+                                    stopAyahSound(e);
+                                  }}
+                                />
+                              ) : (
+                                <IoPlayCircleOutline
+                                  size={25}
+                                  onClick={(e) => {
+                                    playAyahSound(e);
+                                  }}
+                                />
+                              )}
+                            </span>
+                            <span>
+                              <IoMdClose
+                                size={25}
+                                onClick={(e) => {
+                                  e.stopPropagation(); // Prevent event propagation
+                                  setAyahPop(false);
+                                  setTafsirPop(false);
+                                  stopAyahSound(e);
+                                  if (currentAudio) {
+                                    currentAudio.currentTime = 0;
+                                  }
+                                }}
+                              />
+                            </span>
+                          </div>
+                        )}
+
+                        {basmala ? (
+                          playingSurah ===
+                            (ayah?.surah?.number || surah?.number) &&
+                          playState ? (
+                            <span className={styles.basmala}>
+                              {" "}
+                              <AiOutlinePauseCircle
+                                size={28}
+                                className="ms-3"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  pauseAudio();
+                                }}
+                              />
+                              {basmala}
+                            </span>
+                          ) : (
+                            <span className={styles.basmala}>
+                              {" "}
+                              <IoPlayCircleOutline
+                                size={28}
+                                className="ms-3"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+
+                                  playSurahAudio(ayah?.surah || surah);
+                                }}
+                              />
+                              {basmala}
+                            </span>
+                          )
+                        ) : (
+                          ""
+                        )}
+                        <span>{restOfAyah}</span>
+
+                        {ayah.sajda ? (
+                          <FaMosque size={25} color={"#508dbc"} />
+                        ) : (
+                          ""
+                        )}
+
+                        {/* Ayah Number */}
+                        <span className={styles.seperatable}>
+                          <FaCircleNotch className={styles.seperatableIcon} />
+                          <p className={styles.seperatablenum}>
+                            {ayah.numberInSurah}
+                          </p>
+                        </span>
                       </span>
-                    </span>
-                  ))}
+                    );
+                  })}
+
                   <div className={styles.pageData}>
                     {active == "page" ? (
                       <div className={styles.pagesSlider}>
@@ -316,7 +525,7 @@ export default function Iqraa() {
                     )}
                   </div>
                   {/* {page == Object.keys(groupedAyahs).length ? "" : ""} */}
-                </div>
+                </motion.div>
               ))
             ) : (
               <p className="mx-auto my-20px w-100">
@@ -365,8 +574,9 @@ export default function Iqraa() {
             ) : (
               ""
             )}
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
+        {/* //! off canvas */}
         <div
           className={`offcanvas offcanvas-end  ${styles.canvas}`}
           data-bs-scroll="true"
@@ -520,7 +730,7 @@ export default function Iqraa() {
                         <IoPlayCircleOutline
                           size={25}
                           onClick={() => {
-                            playSurahAudio(ele.number);
+                            playSurahAudio(ele);
                           }}
                         />
                       )}

@@ -127,6 +127,7 @@ const QuranProvider = ({ children }) => {
         getSurahAudio,
         searchQuran,
         searchResults,
+        setSearchResults,
       }}
     >
       {children}
