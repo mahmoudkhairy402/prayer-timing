@@ -1,4 +1,6 @@
-@import url("https://fonts.googleapis.com/css2?family=Amiri:ital@0;1&display=swap");
+// @import url("https://fonts.googleapis.com/css2?family=Amiri:ital@0;1&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Scheherazade+New:wght@400;500;600;700&display=swap");
+
 .iqraa {
   background-color: var(--secondaryColor);
   position: relative;
@@ -181,7 +183,7 @@
     text-align: justify;
     word-wrap: break-word;
     line-break: strict;
-    font-family: "Amiri", serif;
+    font-family: "Scheherazade New", serif;
     position: relative;
     align-items: center;
     .pageData {
@@ -237,6 +239,11 @@
         top: 50%;
         transform: translate(-50%, -50%);
         color: var(--biegColor);
+      }
+
+      .seperatableIcon {
+        font-size: 22px;
+        // display: none;
       }
       .seperatablenum {
         font-size: 10px;
